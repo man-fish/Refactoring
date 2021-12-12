@@ -12,6 +12,22 @@ export default class Customer {
         return this._name;
     }
 
+    public getTotalCost(): number {
+        let result = 0;
+        this._rentals.forEach((rental) => {
+            result += rental.calculateCost();
+        });
+        return result;
+    }
+
+    public getTotalFreq(): number {
+        let result = 0;
+        this._rentals.forEach((rental) => {
+            result += rental.calculateFreqRenterPoints();
+        });
+        return result;
+    }
+
     public statement(): string {
         let result = 'Rental Record for ' + this.getName() + '\n';
 
@@ -29,19 +45,23 @@ export default class Customer {
         return result;
     }
 
-    public getTotalCost(): number {
-        let result = 0;
+    public htmlStatement() {
+        let result =
+            '<H1>Rentals for <EM>' + this.getName() + '\n' + '</EM></ H1><P>\n';
         this._rentals.forEach((rental) => {
-            result += rental.calculateCost();
+            result +=
+                '\t' +
+                rental.movie.title +
+                '\t' +
+                rental.calculateCost() +
+                '<BR>\n';
         });
-        return result;
-    }
-
-    public getTotalFreq(): number {
-        let result = 0;
-        this._rentals.forEach((rental) => {
-            result += rental.calculateFreqRenterPoints();
-        });
+        // “add footer lines
+        result += '<P>You owe <EM>' + this.getTotalCost() + '</EM><P>\n';
+        result +=
+            'On this rental you earned <EM>' +
+            this.getTotalFreq() +
+            '</EM> frequent renter points<P>';
         return result;
     }
 }
