@@ -2,11 +2,7 @@ import Movie from './Movie';
 import Rental from './Rental';
 
 export default class Customer {
-    constructor(
-        private _name: string,
-        private _frequentRenterPoints: number,
-        private _rentals: Rental[]
-    ) {}
+    constructor(private _name: string, private _rentals: Rental[]) {}
 
     public addRental(arg: Rental) {
         this._rentals.push(arg);
@@ -17,22 +13,35 @@ export default class Customer {
     }
 
     public statement(): string {
-        let totalAmount = 0; //总消费金。
-        let frequentRenterPoints = this._frequentRenterPoints; //常客积点
         let result = 'Rental Record for ' + this.getName() + '\n';
 
         this._rentals.forEach((rental) => {
-            let curAmount = rental.calculateCost();
-            frequentRenterPoints += rental.calculateFreqRenterPoints();
-            result += '\t' + rental.movie.title + '\t' + curAmount + '\n';
-            totalAmount += curAmount;
+            result +=
+                '\t' +
+                rental.movie.title +
+                '\t' +
+                rental.calculateCost() +
+                '\n';
         });
-        result += 'Amount owed is ' + totalAmount + '\n';
+        result += 'Amount owed is ' + this.getTotalCost() + '\n';
         result +=
-            'You earned ' +
-            (frequentRenterPoints - this._frequentRenterPoints) +
-            ' frequent renter points';
-        this._frequentRenterPoints = frequentRenterPoints;
+            'You earned ' + this.getTotalFreq() + ' frequent renter points';
+        return result;
+    }
+
+    public getTotalCost(): number {
+        let result = 0;
+        this._rentals.forEach((rental) => {
+            result += rental.calculateCost();
+        });
+        return result;
+    }
+
+    public getTotalFreq(): number {
+        let result = 0;
+        this._rentals.forEach((rental) => {
+            result += rental.calculateFreqRenterPoints();
+        });
         return result;
     }
 }
