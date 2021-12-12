@@ -22,22 +22,7 @@ export default class Customer {
         let result = 'Rental Record for ' + this.getName() + '\n';
 
         this._rentals.forEach((rental) => {
-            let curAmount = 0;
-            switch (rental.movie.priceCode) {
-                case Movie.REGULAR: //普通片
-                    curAmount += 2;
-                    if (rental.daysRented > 2)
-                        curAmount += (rental.daysRented - 2) * 1.5;
-                    break;
-                case Movie.NEW_RELEASE: //新片
-                    curAmount += rental.daysRented * 3;
-                    break;
-                case Movie.CHILDRENS: //儿童。
-                    curAmount += 1.5;
-                    if (rental.daysRented > 3)
-                        curAmount += (rental.daysRented - 3) * 1.5;
-                    break;
-            }
+            let curAmount = rental.calculateCost();
             frequentRenterPoints++;
             // add bonus for a two day new release rental
             if (
