@@ -1,9 +1,35 @@
+import {
+    PriceStrategy,
+    RegularPriceStrategy,
+    NewReleasePriceStrategy,
+    ChildrenPriceStrategy,
+} from './Price';
 export default class Movie {
     public static REGULAR = 0 as const;
     public static NEW_RELEASE = 1 as const;
     public static CHILDRENS = 2 as const;
+    // @ts-ignore
+    private priceStrategy: PriceStrategy;
 
-    constructor(private _title: string, private _priceCode: number) {}
+    constructor(private _title: string, private _priceCode: number) {
+        this.setPriceStrategy(_priceCode);
+    }
+
+    private setPriceStrategy(priceCode: number) {
+        switch (priceCode) {
+            case Movie.REGULAR: //普通片
+                this.priceStrategy = new RegularPriceStrategy();
+                break;
+            case Movie.NEW_RELEASE: //新片
+                this.priceStrategy = new NewReleasePriceStrategy();
+                break;
+            case Movie.CHILDRENS: //儿童。
+                this.priceStrategy = new ChildrenPriceStrategy();
+                break;
+            default:
+                throw new Error('invalid price code;');
+        }
+    }
 
     public get priceCode() {
         return this._priceCode;
@@ -18,24 +44,10 @@ export default class Movie {
     }
 
     public calculateCost(daysRented: number): number {
-        let result = 0;
-        switch (this.priceCode) {
-            case Movie.REGULAR: //普通片
-                result += 2;
-                if (daysRented > 2) result += (daysRented - 2) * 1.5;
-                break;
-            case Movie.NEW_RELEASE: //新片
-                result += daysRented * 3;
-                break;
-            case Movie.CHILDRENS: //儿童。
-                result += 1.5;
-                if (daysRented > 3) result += (daysRented - 3) * 1.5;
-                break;
-        }
-        return result;
+        return this.priceStrategy.calculateCost(daysRented);
     }
 
     public calculateFreqRenterPoints(daysRented: number): number {
-        return this._priceCode == Movie.NEW_RELEASE && daysRented > 1 ? 2 : 1;
+        return this.priceStrategy.calculateFreqRenterPoints(daysRented);
     }
 }
