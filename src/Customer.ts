@@ -23,14 +23,7 @@ export default class Customer {
 
         this._rentals.forEach((rental) => {
             let curAmount = rental.calculateCost();
-            frequentRenterPoints++;
-            // add bonus for a two day new release rental
-            if (
-                rental.movie.priceCode == Movie.NEW_RELEASE &&
-                rental.daysRented > 1
-            ) {
-                frequentRenterPoints++; //show figures for this rental（显示此笔租借记录）
-            }
+            frequentRenterPoints += rental.calculateFreqRenterPoints();
             result += '\t' + rental.movie.title + '\t' + curAmount + '\n';
             totalAmount += curAmount;
         });

@@ -29,4 +29,10 @@ export default class Rental {
         }
         return curAmount;
     }
+
+    public calculateFreqRenterPoints(): number {
+        return this.movie.priceCode == Movie.NEW_RELEASE && this.daysRented > 1
+            ? 2
+            : 1;
+    }
 }
